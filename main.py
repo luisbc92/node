@@ -11,7 +11,7 @@ import logging as log
 log.basicConfig(stream=sys.stderr, level=log.INFO)
 
 # initiate mesh network
-mesh = meshnet.MeshNet('ttyUSB0')
+mesh = meshnet.MeshNet('/dev/ttyUSB0')
 
 def pipe_update(data):
 	# check if the received file is correct
