@@ -213,7 +213,7 @@ class MeshNet:
 			self.status.tx = frame['deliver_status']
 
 	def exit(self):
-		self.xbee.halt()
+		#self.xbee.halt()
 		self.serial.close()
 
 	# initializes mesh network

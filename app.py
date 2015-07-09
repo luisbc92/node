@@ -26,7 +26,7 @@ def main(_mesh):
 	mesh.receive = mesh_receive
 
 	# initiate tag scanner
-	ts = tagscanner.TagScanner('/dev/ttyAMA0', tag_read)
+	ts = tagscanner.TagScanner('/dev/ttyACM0', tag_read)
 
 	while True:
 		time.sleep(1)
