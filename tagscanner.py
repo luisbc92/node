@@ -53,13 +53,13 @@ class TagScanner:
 		rx = {}
 		if args['packet_type'] == 4 and sender in self.tags and len(args['data']) == 30:
 			# check if packet was already received
-			if not args['data'][29] == self.tags[sender]['count']:
-				rx['mac'] = sender					# MAC address
-				rx['count'] = args['data'][29]		# packet count
-				rx['rssi'] = args['rssi']			# RSSI
-				rx['data'] = args['data'][2:29]		# data payload
-				self.tags[sender] = rx				# append received packet
-				self.receive(rx)					# call user
+			#if not args['data'][29] == self.tags[sender]['count']:
+			rx['mac'] = sender					# MAC address
+			rx['count'] = args['data'][29]		# packet count
+			rx['rssi'] = args['rssi']			# RSSI
+			#rx['data'] = args['data'][2:29]		# data payload
+			self.tags[sender] = rx				# append received packet
+			self.receive(rx)					# call user
 
 	def check_activity(self):
 		while not self.kill_check_activity:
