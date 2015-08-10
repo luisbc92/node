@@ -5,10 +5,14 @@ import meshnet
 import time
 import sys
 import os
-import app
 import logging as log
 
 log.basicConfig(stream=sys.stderr, level=log.INFO)
+
+try:
+	import app
+except ImportError:
+	log.error('APP: Application is invalid')
 
 # initiate mesh network
 mesh = meshnet.MeshNet('/dev/ttyUSB0')
@@ -22,8 +26,11 @@ def pipe_update(data):
 		return
 
 	# stop mesh and app
-	mesh.exit()
-	app.exit()
+	try:
+		app.exit()
+		mesh.exit()
+	except:
+		log.warning('MAIN: Error exiting')
 
 	# update app
 	f = open('./app.py', 'w')
@@ -42,8 +49,20 @@ def main():
 		# execute app
 		app.main(mesh)
 	except KeyboardInterrupt:
+		pass
+	except:
+		log.warning('APP: Unexpected error')
+		while True:
+			# keep running to get updates
+			pass
+
+
+	# stop mesh and app
+	try:
 		app.exit()
 		mesh.exit()
+	except:
+		log.warning('MAIN: Error exiting')
 
 if __name__ == '__main__':
 	main()
