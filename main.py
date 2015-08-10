@@ -7,7 +7,7 @@ import sys
 import os
 import logging as log
 
-log.basicConfig(stream=sys.stderr, level=log.INFO)
+log.basicConfig(stream=sys.stderr, level=log.DEBUG)
 
 try:
 	import app
