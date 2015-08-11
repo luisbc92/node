@@ -33,7 +33,7 @@ def pipe_update(data):
 		log.warning('MAIN: Error exiting')
 
 	# update app
-	f = open('./app.py', 'w')
+	f = open('/home/pi/node/app.py', 'w')
 	f.write(data)
 	f.close()
 
