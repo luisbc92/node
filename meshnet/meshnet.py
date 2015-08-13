@@ -216,7 +216,7 @@ class MeshNet:
 
 	# stop mesh network
 	def stop(self):
-		self.xbee.halt()
+		#self.xbee.halt()
 		self.serial.close()
 
 	# start mesh network

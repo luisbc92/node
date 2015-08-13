@@ -61,7 +61,7 @@ class App:
 	# stop application
 	def stop(self):
 		self.running = False
-		self.check_thread.join(1)
+		time.sleep(0.5)
 		self.serial.close()
 
 	# initialize application
