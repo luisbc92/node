@@ -22,16 +22,11 @@ mesh = meshnet.MeshNet('/dev/ttyUSB0')
 try:
 	app = app.App(mesh)
 except Exception, e:
-	log.warning('MAIN: ' + str(e))
+	log.warning('APP: ' + str(e))
 
 # update pipe
 def pipe_update(data):
 	log.info('MAIN: Update requested')
-	# stop application
-	try:
-		app.stop()
-	except Exception, e:
-		log.warning('MAIN: ' + str(e))
 
 	# check if the received file is valid
 	try:
@@ -45,7 +40,7 @@ def pipe_update(data):
 	try:
 		mesh.stop()
 	except Exception, e:
-		log.warning('MAIN: ' + str(e))
+		log.warning('MESH: ' + str(e))
 
 	# update application
 	f = open('/home/pi/node/app.py', 'w')
@@ -62,7 +57,7 @@ def pipe_stopapp(data):
 	try:
 		app.stop()
 	except Exception, e:
-		log.warning('MAIN: ' + str(e))
+		log.warning('APP: ' + str(e))
 
 # start application pipe
 def pipe_startapp(data):
@@ -98,7 +93,7 @@ def main():
 	try:
 		app.start()
 	except Exception, e:
-		log.warning('MAIN: ' + str(e))
+		log.warning('APP: ' + str(e))
 
 	# infinite loop
 	try:
