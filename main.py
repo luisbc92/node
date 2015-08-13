@@ -27,19 +27,25 @@ except:
 # update pipe
 def pipe_update(data):
 	log.info('MAIN: Update requested')
+	# stop application
+	try:
+		app.stop()
+	except:
+		log.warning('MAIN: Error stopping application')
+
 	# check if the received file is valid
 	try:
 		compile(data, '<string>', 'exec')
 	except:
 		log.error('UPDATE: Application is invalid')
+		app.start()
 		return
 
-	# stop mesh network and application
+	# stop mesh network
 	try:
-		app.stop()
 		mesh.stop()
 	except:
-		log.warning('MAIN: Error stopping application and mesh')
+		log.warning('MAIN: Error stopping mesh')
 
 	# update application
 	f = open('/home/pi/node/app.py', 'w')

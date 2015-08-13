@@ -27,6 +27,7 @@ class App:
 				if ble_name.find('TAG') == 0:						# if name begins with 'TAG'
 					tag = {'mac': sender, 'rssi': args['rssi'], 'count': 0}	# pack data
 					self.mesh.net_tx(self.mesh.attr.master, tag)			# send to master
+					print 'Sent packet' + str(tag)
 
 	# ble check activity thread
 	def check_activity(self):
@@ -55,13 +56,12 @@ class App:
 
 		# setup thread for checking ble activity
 		self.running = True
-		self.thread = threading.Thread(target=self.check_activity)
-		self.thread.start()
+		self.check_thread.start()
 
 	# stop application
 	def stop(self):
 		self.running = False
-		self.thread.join(1)
+		self.check_thread.join(1)
 		self.serial.close()
 
 	# initialize application
@@ -73,3 +73,6 @@ class App:
 		self.serial = Serial(port='/dev/ttyACM0', baudrate=115200, timeout=1)
 		self.serial.flushInput()
 		self.serial.flushOutput()
+
+		# create thread
+		self.check_thread = threading.Thread(target=self.check_activity)
