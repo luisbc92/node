@@ -21,8 +21,8 @@ mesh = meshnet.MeshNet('/dev/ttyUSB0')
 # instatiate application
 try:
 	app = app.App(mesh)
-except:
-	log.error('APP: Error instatiating application')
+except Exception, e:
+	log.warning('MAIN: ' + str(e))
 
 # update pipe
 def pipe_update(data):
@@ -30,8 +30,8 @@ def pipe_update(data):
 	# stop application
 	try:
 		app.stop()
-	except:
-		log.warning('MAIN: Error stopping application')
+	except Exception, e:
+		log.warning('MAIN: ' + str(e))
 
 	# check if the received file is valid
 	try:
@@ -44,8 +44,8 @@ def pipe_update(data):
 	# stop mesh network
 	try:
 		mesh.stop()
-	except:
-		log.warning('MAIN: Error stopping mesh')
+	except Exception, e:
+		log.warning('MAIN: ' + str(e))
 
 	# update application
 	f = open('/home/pi/node/app.py', 'w')
@@ -61,8 +61,8 @@ def pipe_stopapp(data):
 	log.info('MAIN: Application stop requested')
 	try:
 		app.stop()
-	except:
-		log.warning('APP: Error stopping application')
+	except Exception, e:
+		log.warning('MAIN: ' + str(e))
 
 # start application pipe
 def pipe_startapp(data):
@@ -76,8 +76,8 @@ def pipe_reset(data):
 	try:
 		app.stop()
 		mesh.stop()
-	except:
-		log.warning('MAIN: Error stopping application and mesh')
+	except Exception, e:
+		log.warning('MAIN: ' + str(e))
 
 	# restart main module
 	python = sys.executable
@@ -97,8 +97,8 @@ def main():
 	# execute application
 	try:
 		app.start()
-	except:
-		log.error('APP: Error starting application')
+	except Exception, e:
+		log.warning('MAIN: ' + str(e))
 
 	# infinite loop
 	try:
@@ -111,8 +111,8 @@ def main():
 	try:
 		app.stop()
 		mesh.stop()
-	except:
-		log.error('MAIN: Error stopping application and mesh')
+	except Exception, e:
+		log.warning('MAIN: ' + str(e))
 
 if __name__ == '__main__':
 	main()
