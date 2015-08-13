@@ -18,15 +18,15 @@ class App:
 	# check gap scan response packets
 	def gap_scan_response(self, sender, args):
 		# convert MAC to string
-		sender = sender.encode('hex')
+		sender = ''.join(chr(c) for c in args['sender'])
 
 		# capture advertisement packets and look for tags
 		if args['packet_type'] == 0:
 				ble_name = ''.join('%c' %c for c in args['data'])	# convert all data into a string to extract name (lazy)
 				ble_name = re.sub(r'\W+', '', ble_name)				# remove everything but chars (lazier)
 				if ble_name.find('TAG') == 0:						# if name begins with 'TAG'
-					tag = {'mac': send, 'rssi': args['rssi'], 'count': 0}	# pack data
-					mesh.net_tx(mesh.attr.master, tag)						# send to master
+					tag = {'mac': sender, 'rssi': args['rssi'], 'count': 0}	# pack data
+					self.mesh.net_tx(self.mesh.attr.master, tag)						# send to master
 
 	# ble check activity thread
 	def check_activity(self):
@@ -39,8 +39,7 @@ class App:
 		# Initialize BGLib
 		self.ble = bglib.BGLib()
 		self.ble.packet_mode = False
-		self.ble.on_timeout = self.timeout 							# Timeout handler
-		self.ble.ble_evt_gap_scan_response += self.scan_response 	# Scan response handler
+		self.ble.ble_evt_gap_scan_response += self.gap_scan_response 	# Scan response handler
 		# Disconnect BLE
 		self.ble.send_command(self.serial, self.ble.ble_cmd_connection_disconnect(0)) 
 		self.ble.check_activity(self.serial, 1)
@@ -66,9 +65,9 @@ class App:
 		self.serial.close()
 
 	# initialize application
-	def __init__(self, _mesh):
+	def __init__(self, mesh):
 		# get instance of the mesh network
-		mesh = _mesh
+		self.mesh = mesh
 
 		# open serial port
 		self.serial = Serial(port='/dev/ttyACM0', baudrate=115200, timeout=1)
