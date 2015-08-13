@@ -5,7 +5,7 @@ import meshnet
 import time
 import sys
 import os
-import logging
+import logging as log
 
 logging.basicConfig(stream = sys.stderr, level = log.DEBUG)
 
