@@ -94,6 +94,7 @@ class MeshNet:
 		for chunk in [p_data[x:x+mtu] for x in range(0, len(p_data), mtu)]:	# partition in chunks
 			packet = {'t': 'c', 'c': chunk}							# type c for chunk (reduce overhead)	
 			self.xbee_tx(dest=dest, data=pack(packet), ack=True)	# transmit chunk
+			time.sleep(0.1)
 		log.debug('NET: Sent packet')
 
 	# advertises self as the master node in the network
@@ -212,27 +213,14 @@ class MeshNet:
 			log.debug('XBEE: Transmission status report')
 			self.status.tx = frame['deliver_status']
 
-	def exit(self):
-		#self.xbee.halt()
+
+	# stop mesh network
+	def stop(self):
+		self.xbee.halt()
 		self.serial.close()
 
-	# initializes mesh network
-	# port = xbee serial port
-	# mesh_id = mesh network id (0x0000 - 0xFFFF)
-	# mesh_ch = mesh network ch (0x0C - 0x17)
-	# receive = handler for incoming data
-	def __init__(self, port=None, mesh_id='\x55\x55', mesh_ch='\x0C', receive=dummy):
-		# Serial port
-		self.serial = Serial(port, timeout=0.5)
-
-		# Mesh Network ID
-		self.attr.id = mesh_id
-		# Mesh Network Channel
-		self.attr.ch = mesh_ch
-
-		# capture receive callback
-		self.receive = receive
-
+	# start mesh network
+	def start(self):
 		# find and configure xbee for communication at 57,600bps and API mode
 		self.serial.baudrate = 57600
 		self.serial.flushOutput()
@@ -269,6 +257,23 @@ class MeshNet:
 
 		# join the network
 		self.net_join()
+
+	# initializes mesh network
+	# port = xbee serial port
+	# mesh_id = mesh network id (0x0000 - 0xFFFF)
+	# mesh_ch = mesh network ch (0x0C - 0x17)
+	# receive = handler for incoming data
+	def __init__(self, port=None, mesh_id='\x55\x55', mesh_ch='\x0C', receive=dummy):
+		# Serial port
+		self.serial = Serial(port, timeout=0.5)
+
+		# Mesh Network ID
+		self.attr.id = mesh_id
+		# Mesh Network Channel
+		self.attr.ch = mesh_ch
+
+		# capture receive callback
+		self.receive = receive
 
 
 

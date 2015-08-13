@@ -5,34 +5,42 @@ import meshnet
 import time
 import sys
 import os
-import logging as log
+import logging
 
-log.basicConfig(stream=sys.stderr, level=log.DEBUG)
+logging.basicConfig(stream = sys.stderr, level = log.DEBUG)
 
+# import application
 try:
 	import app
 except ImportError:
 	log.error('APP: Application is invalid')
 
-# initiate mesh network
+# instatiate mesh network
 mesh = meshnet.MeshNet('/dev/ttyUSB0')
 
+# instatiate application
+try:
+	app = app.App(mesh)
+except:
+	log.error('APP: Error instatiating application')
+
+# update pipe
 def pipe_update(data):
-	# check if the received file is correct
+	# check if the received file is valid
 	try:
 		compile(data, '<string>', 'exec')
 	except:
-		log.warning('UPDATE: Invalid app')
+		log.error('UPDATE: Application is invalid')
 		return
 
-	# stop mesh and app
+	# stop mesh network and application
 	try:
-		app.exit()
-		mesh.exit()
+		app.stop()
+		mesh.stop()
 	except:
-		log.warning('MAIN: Error exiting')
+		log.warning('MAIN: Error stopping application and mesh')
 
-	# update app
+	# update application
 	f = open('/home/pi/node/app.py', 'w')
 	f.write(data)
 	f.close()
@@ -41,28 +49,60 @@ def pipe_update(data):
 	python = sys.executable
 	os.execl(python, python, * sys.argv)
 
-def main():
-	# update pipe
-	mesh.net_add_pipe('update', pipe_update)
-
+# stop application pipe
+def pipe_stopapp(data):
 	try:
-		# execute app
-		app.main(mesh)
+		app.stop()
+	except:
+		log.warning('APP: Error stopping application')
+
+# start application pipe
+def pipe_startapp(data):
+	app.start()
+
+# reset pipe
+def pipe_reset(data):
+	# stop mesh network and application
+	try:
+		app.stop()
+		mesh.stop()
+	except:
+		log.warning('MAIN: Error stopping application and mesh')
+
+	# restart main module
+	python = sys.executable
+	os.execl(python, python, * sys.argv)
+
+# main module
+def main():
+	# start mesh network
+	mesh.start()
+
+	# register pipes
+	mesh.net_add_pipe('update', pipe_update)
+	mesh.net_add_pipe('startapp', pipe_startapp)
+	mesh.net_add_pipe('stopapp', pipe_stopapp)
+	mesh.net_add_pipe('reset', pipe_reset)
+
+	# execute application
+	try:
+		app.start()
+	except:
+		log.error('APP: Error starting application')
+
+	# infinite loop
+	try:
+		while True:
+			pass
 	except KeyboardInterrupt:
 		pass
-	except:
-		log.warning('APP: Unexpected error')
-		while True:
-			# keep running to get updates
-			pass
 
-
-	# stop mesh and app
+	# stop everything
 	try:
-		app.exit()
-		mesh.exit()
+		app.stop()
+		mesh.stop()
 	except:
-		log.warning('MAIN: Error exiting')
+		log.error('MAIN: Error stopping application and mesh')
 
 if __name__ == '__main__':
 	main()
