@@ -26,11 +26,11 @@ class App:
 				ble_name = re.sub(r'\W+', '', ble_name)				# remove everything but chars (lazier)
 				if ble_name.find('TAG') == 0:						# if name begins with 'TAG'
 					tag = {'mac': sender, 'rssi': args['rssi'], 'count': 0}	# pack data
-					self.mesh.net_tx(self.mesh.attr.master, tag)						# send to master
+					self.mesh.net_tx(self.mesh.attr.master, tag)			# send to master
 
 	# ble check activity thread
 	def check_activity(self):
-		while running:
+		while self.running:
 			self.ble.check_activity(self.serial)
 			time.sleep(0.1)
 

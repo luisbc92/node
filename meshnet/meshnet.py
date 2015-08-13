@@ -59,7 +59,7 @@ class MeshNet:
 	receive = None
 
 	# dummy receive callback
-	def dummy(self, data):
+	def dummy(data):
 		pass
 
 	# enters command mode and returns True if succesful

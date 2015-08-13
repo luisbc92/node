@@ -7,7 +7,7 @@ import sys
 import os
 import logging as log
 
-log.basicConfig(stream = sys.stderr, level = log.DEBUG)
+log.basicConfig(stream = sys.stderr, level = log.INFO)
 
 # import application
 try:
@@ -26,6 +26,7 @@ except:
 
 # update pipe
 def pipe_update(data):
+	log.info('MAIN: Update requested')
 	# check if the received file is valid
 	try:
 		compile(data, '<string>', 'exec')
@@ -51,6 +52,7 @@ def pipe_update(data):
 
 # stop application pipe
 def pipe_stopapp(data):
+	log.info('MAIN: Application stop requested')
 	try:
 		app.stop()
 	except:
@@ -58,10 +60,12 @@ def pipe_stopapp(data):
 
 # start application pipe
 def pipe_startapp(data):
+	log.info('MAIN: Application start requested')
 	app.start()
 
 # reset pipe
 def pipe_reset(data):
+	log.info('MAIN: Reset requested')
 	# stop mesh network and application
 	try:
 		app.stop()
